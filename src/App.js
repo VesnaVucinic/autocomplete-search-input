@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { getApiSuggestions } from './requests';
+import SearchInput from './searchInput';
+import { MainWrapper } from './style';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [options, setOptions] = useState([]);
+	const [loading, setLoading] = useState(false);
+
+	const getSuggestions = async (word) => {
+		if (word) {
+			setLoading(true);
+			let response = await getApiSuggestions(word);
+			setOptions(response);
+			setLoading(false);
+		} else {
+			setOptions([]);
+		}
+	};
+
+	const getApiUrl = (url) => {
+		window.open(url, '_blank');
+	};
+
+	return (
+		<MainWrapper>
+			<SearchInput
+				loading={loading}
+				options={options}
+				requests={getSuggestions}
+				onClickFunction={getApiUrl}
+				placeholder="find a public api"
+			/>
+		</MainWrapper>
+	);
 }
 
 export default App;
